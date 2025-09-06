@@ -1,12 +1,14 @@
 {
   "name": "use-history-ai",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup src/index.ts --format cjs,esm --dts"
   },
+  "files": ["dist"],
   "keywords": ["ai", "clipboard", "history", "npm", "langchain", "openai"],
-  "author": "",
+  "author": "Pawan",
   "license": "ISC"
 }
