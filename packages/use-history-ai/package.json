@@ -1,0 +1,12 @@
+{
+  "name": "use-history-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["ai", "clipboard", "history", "npm", "langchain", "openai"],
+  "author": "",
+  "license": "ISC"
+}
