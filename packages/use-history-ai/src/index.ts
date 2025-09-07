@@ -1,8 +1,24 @@
+import { randomUUID as nodeRandomUUID } from "crypto";
+
 export type HistoryItem = {
   id: string;
   text: string;
   timestamp: number;
 };
+
+function generateId(): string {
+  if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  if (typeof nodeRandomUUID === "function") {
+    return nodeRandomUUID();
+  }
+
+  // Fallback
+  return Math.random().toString(36).substring(2, 9);
+}
+
 
 export class HistoryManager {
   private history: HistoryItem[] = [];
@@ -23,7 +39,7 @@ export class HistoryManager {
 
   add(text: string) {
     const item: HistoryItem = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       text,
       timestamp: Date.now(),
     };

@@ -7,8 +7,20 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts"
   },
-  "files": ["dist"],
-  "keywords": ["ai", "clipboard", "history", "npm", "langchain", "openai"],
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "ai",
+    "clipboard",
+    "history",
+    "npm",
+    "langchain",
+    "openai"
+  ],
   "author": "Pawan",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.3.1"
+  }
 }
