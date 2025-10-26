@@ -85,42 +85,37 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>📋 AI Clipboard Manager</h1>
-        <p className="subtitle">Powered by Google Gemini AI</p>
-
+        <h1>Clipboard Manager</h1>
+        <p className="subtitle">
+          AI-powered clipboard history with Google Gemini
+        </p>
         <div className="keyboard-hint">
-          💡 Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> to toggle
+          Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> to toggle
           history
         </div>
       </header>
 
       {!apiKey && (
         <div className="warning">
-          ⚠️ <strong>API Key Missing!</strong>
-          <br />
-          Create <code>.env.local</code> with:{" "}
-          <code>VITE_GEMINI_API_KEY=your_key</code>
+          <strong>API Key Missing</strong> — Create a <code>.env.local</code>{" "}
+          file with <code>VITE_GEMINI_API_KEY=your_key</code>
         </div>
       )}
 
-      {/* Main Controls */}
       <div className="controls">
         <button
           onClick={isListening ? stopListening : startListening}
-          className={isListening ? "active pulse" : ""}
+          className={isListening ? "active" : ""}
         >
-          {isListening ? "⏸️ Stop Listening" : "▶️ Start Listening"}
+          {isListening ? "Stop Listening" : "Start Listening"}
         </button>
-
         <button onClick={() => setIsModalOpen(!isModalOpen)}>
-          📋 View History ({allHistory.length})
+          View History ({allHistory.length})
         </button>
-
         <button onClick={exportHistory} disabled={allHistory.length === 0}>
-          💾 Export
+          Export
         </button>
-
-        <button onClick={() => fileInputRef.current?.click()}>📥 Import</button>
+        <button onClick={() => fileInputRef.current?.click()}>Import</button>
         <input
           ref={fileInputRef}
           type="file"
@@ -128,26 +123,23 @@ function App() {
           onChange={handleImport}
           style={{ display: "none" }}
         />
-
         <button
           onClick={clearHistory}
           disabled={allHistory.length === 0}
           className="danger"
         >
-          🗑️ Clear All
+          Clear All
         </button>
       </div>
 
-      {/* Search and Filter */}
       <div className="filters">
         <input
           type="text"
-          placeholder="🔍 Search clipboard history..."
+          placeholder="Search clipboard history..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
-
         <select
           value={selectedCategory || ""}
           onChange={(e) => setSelectedCategory(e.target.value || null)}
@@ -162,11 +154,9 @@ function App() {
         </select>
       </div>
 
-      {/* Clipboard History */}
       <div className="history-section">
         <h3>
-          📋 Clipboard History
-          {searchQuery && ` - Found ${history.length} items`}
+          Clipboard History {searchQuery && `— ${history.length} results`}
         </h3>
 
         {history.length === 0 ? (
@@ -174,8 +164,8 @@ function App() {
             {isListening
               ? searchQuery
                 ? "No items match your search"
-                : "Copy something (Ctrl+C) to see it here..."
-              : 'Click "Start Listening" to track your clipboard'}
+                : "Copy something to see it here"
+              : "Click Start Listening to track your clipboard"}
           </p>
         ) : (
           <div className="history-list">
@@ -194,17 +184,15 @@ function App() {
                         : "Add to favorites"
                     }
                   >
-                    {item.favorite ? "⭐" : "☆"}
+                    {item.favorite ? "★" : "☆"}
                   </button>
                 </div>
 
                 <div className="item-content">
                   <div className="item-text">{item.text}</div>
-
                   {item.category && (
                     <span className="category-badge">{item.category}</span>
                   )}
-
                   {item.tags && item.tags.length > 0 && (
                     <div className="tags">
                       {item.tags.map((tag) => (
@@ -224,9 +212,8 @@ function App() {
                     onClick={() => copyToClipboard(item.text)}
                     title="Copy"
                   >
-                    📋 Copy
+                    Copy
                   </button>
-
                   <button
                     onClick={() =>
                       setSelectedItemForTag(
@@ -235,15 +222,14 @@ function App() {
                     }
                     title="Add tag"
                   >
-                    🏷️ Tag
+                    Tag
                   </button>
-
                   <button
                     onClick={() => removeItem(item.id)}
                     title="Remove"
                     className="danger"
                   >
-                    ❌
+                    Remove
                   </button>
                 </div>
 
@@ -259,7 +245,6 @@ function App() {
                       }
                     />
                     <button onClick={() => handleAddTag(item.id)}>Add</button>
-
                     <input
                       type="text"
                       placeholder="Set category..."
@@ -280,28 +265,27 @@ function App() {
         )}
       </div>
 
-      {/* AI Analysis Section */}
       <div className="ai-section">
-        <h3>🤖 AI Analysis</h3>
+        <h3>AI Analysis</h3>
 
         <div className="quick-ai-actions">
           <button
             onClick={handleSummarize}
             disabled={allHistory.length === 0 || loading || !apiKey}
           >
-            ✨ Summarize History
+            Summarize History
           </button>
           <button
             onClick={() => analyzeHistory("Categorize all items")}
             disabled={allHistory.length === 0 || loading || !apiKey}
           >
-            📊 Auto-Categorize
+            Auto-Categorize
           </button>
           <button
             onClick={() => analyzeHistory("Find all URLs")}
             disabled={allHistory.length === 0 || loading || !apiKey}
           >
-            🔗 Extract URLs
+            Extract URLs
           </button>
         </div>
 
@@ -312,10 +296,10 @@ function App() {
             placeholder="Ask AI about your clipboard history...
 
 Examples:
-- What are the main topics I've been copying?
-- Find all code snippets
-- Translate all items to Spanish
-- Create a summary of all links"
+• What are the main topics I've been copying?
+• Find all code snippets
+• Translate all items to Spanish
+• Create a summary of all links"
             rows={4}
             disabled={loading || !apiKey || allHistory.length === 0}
           />
@@ -325,22 +309,20 @@ Examples:
               loading || !apiKey || !prompt.trim() || allHistory.length === 0
             }
           >
-            {loading ? "⏳ Analyzing..." : "🔍 Analyze"}
+            {loading ? "Analyzing..." : "Analyze"}
           </button>
         </form>
       </div>
 
-      {/* Error Display */}
       {error && (
         <div className="error">
-          <strong>❌ Error:</strong> {error}
+          <strong>Error:</strong> {error}
         </div>
       )}
 
-      {/* AI Response */}
       {response && (
         <div className="response">
-          <h3>🤖 AI Response:</h3>
+          <h3>AI Response</h3>
           <div className="output">{response.output}</div>
         </div>
       )}
@@ -352,13 +334,12 @@ Examples:
         </div>
       )}
 
-      {/* Modal for Quick View */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>📋 Quick History View</h2>
-              <button onClick={() => setIsModalOpen(false)}>✕</button>
+              <h2>Quick History View</h2>
+              <button onClick={() => setIsModalOpen(false)}>×</button>
             </div>
             <div className="modal-content">
               {history.slice(0, 10).map((item) => (
