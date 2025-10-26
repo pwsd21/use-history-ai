@@ -5,11 +5,29 @@ export interface ClipboardItem {
   text: string;
   timestamp: number;
   type: "text" | "image" | "html";
+  category?: string | undefined;
+  tags?: string[] | undefined;
+  favorite?: boolean | undefined;
 }
 
-export function useClipboardHistory(maxItems: number = 50) {
+export interface ClipboardHistoryOptions {
+  maxItems?: number;
+  enableKeyboardShortcuts?: boolean;
+  autoSave?: boolean;
+}
+
+export function useClipboardHistory(options: ClipboardHistoryOptions = {}) {
+  const {
+    maxItems = 100,
+    enableKeyboardShortcuts = true,
+    autoSave = true,
+  } = options;
+
   const [history, setHistory] = useState<ClipboardItem[]>([]);
   const [isListening, setIsListening] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Load history from localStorage on mount
   useEffect(() => {
@@ -25,16 +43,37 @@ export function useClipboardHistory(maxItems: number = 50) {
 
   // Save history to localStorage whenever it changes
   useEffect(() => {
-    if (history.length > 0) {
+    if (autoSave && history.length > 0) {
       localStorage.setItem("clipboard-history", JSON.stringify(history));
     }
-  }, [history]);
+  }, [history, autoSave]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!enableKeyboardShortcuts) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl+Shift+V to toggle history modal
+      if (e.ctrlKey && e.shiftKey && e.key === "V") {
+        e.preventDefault();
+        setIsModalOpen((prev) => !prev);
+      }
+
+      // Escape to close modal
+      if (e.key === "Escape" && isModalOpen) {
+        setIsModalOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [enableKeyboardShortcuts, isModalOpen]);
 
   // Listen for copy events
   useEffect(() => {
     if (!isListening) return;
 
-    const handleCopy = async (e: ClipboardEvent) => {
+    const handleCopy = async () => {
       try {
         const text = await navigator.clipboard.readText();
 
@@ -44,6 +83,7 @@ export function useClipboardHistory(maxItems: number = 50) {
             text: text.trim(),
             timestamp: Date.now(),
             type: "text",
+            tags: [],
           };
 
           setHistory((prev) => {
@@ -59,13 +99,32 @@ export function useClipboardHistory(maxItems: number = 50) {
       }
     };
 
-    // Listen to copy events
     document.addEventListener("copy", handleCopy);
-
-    return () => {
-      document.removeEventListener("copy", handleCopy);
-    };
+    return () => document.removeEventListener("copy", handleCopy);
   }, [isListening, maxItems]);
+
+  // Filter history by search and category
+  const filteredHistory = history.filter((item) => {
+    const matchesSearch = searchQuery
+      ? item.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.tags?.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : true;
+
+    const matchesCategory = selectedCategory
+      ? item.category === selectedCategory
+      : true;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  // Get all unique categories
+  const categories = Array.from(
+    new Set(
+      history.filter((item) => item.category).map((item) => item.category)
+    )
+  );
 
   const startListening = useCallback(() => {
     setIsListening(true);
@@ -94,13 +153,90 @@ export function useClipboardHistory(maxItems: number = 50) {
     }
   }, []);
 
+  const addTag = useCallback((id: string, tag: string) => {
+    setHistory((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, tags: [...(item.tags || []), tag] as string[] }
+          : item
+      )
+    );
+  }, []);
+
+  const removeTag = useCallback((id: string, tag: string) => {
+    setHistory((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              tags: (item.tags?.filter((t) => t !== tag) || []) as string[],
+            }
+          : item
+      )
+    );
+  }, []);
+
+  const setCategory = useCallback((id: string, category: string) => {
+    setHistory((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, category } : item))
+    );
+  }, []);
+
+  const toggleFavorite = useCallback((id: string) => {
+    setHistory((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, favorite: !item.favorite } : item
+      )
+    );
+  }, []);
+
+  const exportHistory = useCallback(() => {
+    const dataStr = JSON.stringify(history, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `clipboard-history-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [history]);
+
+  const importHistory = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target?.result as string);
+        if (Array.isArray(imported)) {
+          setHistory(imported);
+        }
+      } catch (err) {
+        console.error("Failed to import history:", err);
+      }
+    };
+    reader.readAsText(file);
+  }, []);
+
   return {
-    history,
+    history: filteredHistory,
+    allHistory: history,
     isListening,
+    searchQuery,
+    selectedCategory,
+    categories,
+    isModalOpen,
+    setIsModalOpen,
+    setSearchQuery,
+    setSelectedCategory,
     startListening,
     stopListening,
     clearHistory,
     removeItem,
     copyToClipboard,
+    addTag,
+    removeTag,
+    setCategory,
+    toggleFavorite,
+    exportHistory,
+    importHistory,
   };
 }

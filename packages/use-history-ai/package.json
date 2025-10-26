@@ -1,27 +1,55 @@
 {
   "name": "use-history-ai",
   "version": "1.0.0",
+  "description": "AI-powered clipboard history manager for React with Google Gemini integration",
   "main": "dist/index.js",
-  "type": "module",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch"
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "prepublishOnly": "npm run build"
+  },
   "keywords": [
-    "ai",
-    "clipboard",
-    "history",
     "react",
+    "react-hooks",
     "hooks",
-    "gemini"
+    "clipboard",
+    "clipboard-manager",
+    "history",
+    "ai",
+    "gemini",
+    "google-gemini",
+    "llm",
+    "productivity"
   ],
-  "author": "Pawan",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pwsd21/use-history-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pwsd21/use-history-ai/issues"
+  },
+  "homepage": "https://github.com/pwsd21/use-history-ai#readme",
+  "author": {
+    "name": "Pawan Sachdeva",
+    "email": "pawansachdeva1998@gmail.com",
+    "url": "https://github.com/pwsd21"
+  },
+  "license": "MIT",
   "dependencies": {
     "@google/genai": "^0.3.0"
   },
@@ -29,10 +57,16 @@
     "react": "^18.0.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^24.3.1",
     "@types/react": "^18.2.0",
+    "@types/testing-library__react": "^10.2.0",
     "react": "^18.2.0",
     "tsup": "^8.0.0",
     "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
