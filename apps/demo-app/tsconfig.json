@@ -10,9 +10,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    // "paths": {
-    //   "use-history-ai": ["../../packages/use-history-ai/src"]
-    // }
+    "paths": {
+      "use-history-ai": ["../../packages/use-history-ai/src"]
+    }
   },
   "include": ["src"]
 }

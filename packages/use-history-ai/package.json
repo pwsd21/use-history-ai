@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
-    "test": "vitest run"
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch"
   },
   "files": [
     "dist"
@@ -16,14 +16,23 @@
     "ai",
     "clipboard",
     "history",
-    "npm",
-    "langchain",
-    "openai"
+    "react",
+    "hooks",
+    "gemini"
   ],
   "author": "Pawan",
   "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^0.3.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
   "devDependencies": {
     "@types/node": "^24.3.1",
-    "jsdom": "^26.1.0"
+    "@types/react": "^18.2.0",
+    "react": "^18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0"
   }
 }
