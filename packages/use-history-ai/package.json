@@ -1,6 +1,6 @@
 {
   "name": "use-history-ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered clipboard history manager for React with Google Gemini integration",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,8 +19,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external react",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external react",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -54,14 +54,11 @@
     "@google/genai": "^0.3.0"
   },
   "peerDependencies": {
-    "react": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^24.3.1",
     "@types/react": "^18.2.0",
-    "@types/testing-library__react": "^10.2.0",
     "react": "^18.2.0",
     "tsup": "^8.0.0",
     "typescript": "^5.3.0"
